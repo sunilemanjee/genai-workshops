@@ -70,6 +70,10 @@ export default function MainChat() {
                     verbose: true
                 }]);
                 break;
+            case 'full_response':
+                //This block handles non-streaming messages
+                setMessages(prevMessages => [...prevMessages, {text: data.text, from: 'AI'}]);
+                break;
             case 'source_text':
                 console.log('Source text received:', data.text)
                 const cleanedText = data.text.map(item => item.replace(/\n+/g, '\n').trim()); // Replace excessive newlines and trim
@@ -96,7 +100,7 @@ export default function MainChat() {
         <div className="flex-1 justify-center items-center h-screen chat-app-container">
             <div className="flex flex-col w-full max-w-[100%] min-w-[400px] min-h-[500px] bg-background rounded-lg shadow-lg">
                 <div className="bg-primary text-primary-foreground px-4 py-3 rounded-t-lg">
-                    <h2 className="text-lg font-medium">Notary Helpbot</h2>
+                    <h2 className="text-lg font-medium">Elastic Search|Observability|Security Labs  Chat 🤖</h2>
                 </div>
 
                 <div className="flex-1 overflow-auto p-4 space-y-4">
