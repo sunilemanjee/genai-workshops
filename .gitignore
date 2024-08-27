@@ -169,3 +169,7 @@ cython_debug/
 
 *cert-solution*
 *excludeme*
+
+*lock
+package-lock.json
+
