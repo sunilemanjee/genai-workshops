@@ -41,35 +41,3 @@ def perform_es_search(query, index):
     logging.info(f"elasticsearch results: {result}")
     return result["hits"]["hits"]
 
-
-
-
-import os
-from elasticsearch import Elasticsearch
-
-client = Elasticsearch(
-    hosts=["https://e42f683bda7c40a5965b829ba3058ece.es.us-east-1.aws.elastic.cloud:443"],
-    api_key=os.getenv("ELASTIC_API_KEY"),
-)
-
-resp = client.search(
-    index="elastic-labs",
-    retriever={
-        "standard": {
-            "query": {
-                "nested": {
-                    "path": "semantic_body.inference.chunks",
-                    "query": {
-                        "sparse_vector": {
-                            "inference_id": "my-elser-endpoint",
-                            "field": "semantic_body.inference.chunks.embeddings",
-                            "query": "How do I configure quantization for a dense vector?"
-                        }
-                    }
-                }
-            }
-        }
-    },
-)
-print(resp)
-
