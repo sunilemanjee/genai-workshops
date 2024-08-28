@@ -10,9 +10,14 @@ logging.basicConfig(
 
 
 # TODO move this to central location so this and search_service don't create separate connections
+# Initialize the Elasticsearch client
 es_client = Elasticsearch(
-    hosts=os.getenv('ES_CLOUD_URL'),
-    api_key=os.getenv('ES_API_KEY'),
+    hosts=os.getenv('ES_URL', 'http://kubernetes-vm:9200'),
+    # api_key=os.getenv('ES_API_KEY'),
+    basic_auth=(
+        os.getenv('ES_USER', 'elastic'),
+        os.getenv('ES_PASSWORD', 'changeme')
+    ),
     timeout=90
 )
 
