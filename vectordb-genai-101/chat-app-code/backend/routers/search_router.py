@@ -60,6 +60,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 chat_message.message,
                 "elastic-labs"
             )
+            logging.info(f"Context received from perform_es_search")
 
             # Create a prompt for the LLM
             prompt = llm_service.create_llm_prompt(
@@ -67,19 +68,26 @@ async def websocket_endpoint(websocket: WebSocket):
                 context_unparsed,
                 convo_history
              )
-            logging.info(f"Prompt for LLM: {prompt}")
+            # logging.info(f"Prompt for LLM: {prompt}")
+            logging.info(f"Prompt length: {len(prompt)}")
 
 
 #TODO this is a mess
             # Send the contextual data back to the UI before making LLM calls
             logging.debug(f"Sending context back to UI: {context_unparsed}")
-            tmp_context = ('\n---------------------------------------------------------\n\n'
-                           '---------------------------------------------------------\n\n\n').join(context_unparsed)
+            logging.info("building tmp_context")
+            # logging.info(context_unparsed)
+            # tmp_context = ('\n---------------------------------------------------------\n\n'
+            #                '---------------------------------------------------------\n\n\n').join(context_unparsed)
+            tmp_context = ""
+            for hit in context_unparsed:
+                tmp_context += f"str(hit)\n\n"
+
             await websocket.send_json({
                 "type": "verbose_info",
-                "text": f"Context gathered from "
-                        f"Elasticsearch\n\n---------------------------------------------------------\n\n"
-                        f"---------------------------------------------------------\n\n{tmp_context}"
+                "text": f"Context gathered from Elasticsearch\n\n{tmp_context}"
+                        # f"Elasticsearch\n\n---------------------------------------------------------\n\n"
+                        # f"---------------------------------------------------------\n\n{tmp_context}"
             })
 
 

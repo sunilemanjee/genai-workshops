@@ -39,6 +39,7 @@ def create_llm_prompt(question, results, conversation_history):
     :param conversation_history:
     :return:
     """
+    logging.info("Starting to create LLM prompt")
     context = ""
     for hit in results:
         inner_hit_path = f"{hit['_index']}.{index_source_fields.get(hit['_index'])[0]}"
@@ -101,6 +102,7 @@ Answer this question using the context provided and the conversation history.
 if the answer is not in the context, please say "I'm unable to answer because the answer is not in the context or previously discussed." DO NOT make up an answer.
   """
 
+    logging.info(f"Done creating LLM prompt")
     return prompt
 
 
