@@ -38,6 +38,9 @@ def perform_es_search(query, index):
         logging.error(f"Error in Elasticsearch search: {str(e)}")
         raise
 
-    logging.info(f"elasticsearch results: {result}")
-    return result["hits"]["hits"]
+    # logging.info(f"elasticsearch results: {result}")
+    hits = result["hits"]["hits"]
+    logging.info(f"number of hits: {len(hits)}")
+    return hits
+
 
