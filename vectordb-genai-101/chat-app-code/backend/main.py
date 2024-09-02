@@ -12,11 +12,11 @@ logging.basicConfig(
 )
 
 
-apm = make_apm_client({
-    'SERVICE_NAME': os.getenv('APM_SERVICE_NAME'),
-    'API_KEY': os.getenv('APM_API_KEY'),
-    'SERVER_URL': os.getenv('APM_SERVER_URL')
-})
+# apm = make_apm_client({
+#     'SERVICE_NAME': os.getenv('APM_SERVICE_NAME'),
+#     'API_KEY': os.getenv('APM_API_KEY'),
+#     'SERVER_URL': os.getenv('APM_SERVER_URL')
+# })
 
 
 app = FastAPI()
@@ -31,7 +31,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.add_middleware(ElasticAPM, client=apm)
+# app.add_middleware(ElasticAPM, client=apm)
 
 # Include the router
 app.include_router(search_router.router)
