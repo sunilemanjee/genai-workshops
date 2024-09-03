@@ -16,7 +16,7 @@ export default function MainChat() {
     // Define the connectWebSocket function to handle WebSocket connections
     const connectWebSocket = () => {
         const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-        const websocketURL = `${protocol}${window.location.hostname}:8000/ws`;
+        const websocketURL = `/ws`;
         websocket.current = new WebSocket(websocketURL);
 
         websocket.current.onopen = () => {
