@@ -9,7 +9,7 @@ logging.basicConfig(
 
 # TODO - this should not be hardcoded
 index_source_fields = {
-    "elastic-labs": [
+    "restaurant_reviews": [
         "semantic_body"
     ]
 }
