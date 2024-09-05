@@ -95,7 +95,7 @@ async def websocket_endpoint(websocket: WebSocket):
             if not streaming_llm:
                 # use Elastic to call chat completion - response is full response
                 response = inference_service.es_chat_completion(prompt,
-                                                                "openai_chat_completions "
+                                                                "openai_chat_completions"
                                                                 )
 
                 logging.info(f"Response from LLM: {response}")

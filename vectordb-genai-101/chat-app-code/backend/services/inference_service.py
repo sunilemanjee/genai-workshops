@@ -20,7 +20,7 @@ es_client = Elasticsearch(
     ),
     timeout=90
 )
-
+logging.info(f"Elasticsearch client Info: {es_client.info()}"  )
 
 def es_chat_completion(prompt, inference_id):
     logging.info(f"Starting Elasticsearch chat completion with Inference ID: {inference_id}")
