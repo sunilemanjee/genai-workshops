@@ -68,7 +68,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 context_unparsed,
                 convo_history
              )
-            # logging.info(f"Prompt for LLM: {prompt}")
+            logging.info(f"Created Prompt for LLM: {prompt}")
             logging.info(f"Prompt length: {len(prompt)}")
 
 
@@ -81,7 +81,7 @@ async def websocket_endpoint(websocket: WebSocket):
             #                '---------------------------------------------------------\n\n\n').join(context_unparsed)
             tmp_context = ""
             for hit in context_unparsed:
-                tmp_context += f"str(hit)\n\n"
+                tmp_context += f"str{hit}\n\n"
 
             await websocket.send_json({
                 "type": "verbose_info",
@@ -93,6 +93,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # Call the LLM to generate a response
             if not streaming_llm:
+                logging.info(f"sending prompt {prompt}")
                 # use Elastic to call chat completion - response is full response
                 response = inference_service.es_chat_completion(prompt,
                                                                 "openai_chat_completions"
