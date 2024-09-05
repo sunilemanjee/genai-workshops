@@ -49,8 +49,16 @@ def create_llm_prompt(question, results, conversation_history):
         ## For semantic_text matches, we need to extract the text from the inner_hits
         if 'inner_hits' in hit and inner_hit_path in hit['inner_hits']:
             logging.info('inner_hits found')
+            restaurant_name = hit['_source']['Restaurant']
+            restaurant_rating = hit['_source']['Rating']
             for inner_hit in hit['inner_hits'][inner_hit_path]['hits']['hits']:
-                context += f"{inner_hit['_source']['text']}\n---\n"
+                review = inner_hit['_source']['text']
+
+                context += f"""
+                Restaurant: {restaurant_name}
+                Rating: {restaurant_rating}
+                Review Chunk: {review}
+                """
         else:
             source_field = index_source_fields.get(hit["_index"])[0]
             hit_context = hit["_source"][source_field]
