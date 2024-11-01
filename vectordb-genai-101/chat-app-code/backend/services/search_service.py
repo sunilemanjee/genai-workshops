@@ -25,8 +25,8 @@ def perform_es_search(query, index):
     logging.info(f"Starting Elasticsearch search for query: {query}")
 
 ## TODO USERS ENTER QUERY CODE HERE
-    es_query = {
-
+    es_query = { 
+        
     }
 
 

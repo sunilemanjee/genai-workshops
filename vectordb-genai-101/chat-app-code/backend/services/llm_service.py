@@ -7,13 +7,6 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-# TODO - this should not be hardcoded
-index_source_fields = {
-    "restaurant_reviews": [
-        "semantic_body"
-    ]
-}
-
 
 def init_conversation_history():
     # convo = [
@@ -41,33 +34,48 @@ def create_llm_prompt(question, results, conversation_history):
     """
     logging.info("Starting to create LLM prompt")
     context = ""
-    logging.info(f"Results: {results}")
-    for hit in results:
-        inner_hit_path = f"{hit['_index']}.{index_source_fields.get(hit['_index'])[0]}"
-        logging.info(f"hit: {hit}")
+    #logging.info(f"Results: {results}")
 
-        ## For semantic_text matches, we need to extract the text from the inner_hits
-        if 'inner_hits' in hit and inner_hit_path in hit['inner_hits']:
-            logging.info('inner_hits found')
-            restaurant_name = hit['_source']['Restaurant']
-            restaurant_rating = hit['_source']['Rating']
-            for inner_hit in hit['inner_hits'][inner_hit_path]['hits']['hits']:
-                review = inner_hit['_source']['text']
+    # Check the structure of the first item in the list to see what it contains
+    if results and isinstance(results, list):
+        first_item = results[0]  # Access the first item to inspect its structure
 
-                context += f"""
-                Restaurant: {restaurant_name}
-                Rating: {restaurant_rating}
-                Review Chunk: {review}
-                """
+        # Print the structure of the first item if it exists
+        if isinstance(first_item, dict):
+            structure = {key: type(value).__name__ for key, value in first_item.items()}
+            print("Structure of the first item in results:", structure)
+            # logging.info(f"Structure of the first item in results: {structure}")
         else:
-            source_field = index_source_fields.get(hit["_index"])[0]
-            hit_context = hit["_source"][source_field]
-            context += f"{hit_context}\n"
+            print("The first item in results is not a dictionary. Type:", type(first_item).__name__)
+            # logging.info(f"The first item in results is not a dictionary. Type: {type(first_item).__name__}")
+    else:
+        print("Results is either empty or not a list.")
+        # logging.info("Results is either empty or not a list.")
+
+    for hit in results:
+        # Check the structure of _source if needed
+        source_structure = {key: type(value).__name__ for key, value in hit['_source'].items()}
+        print("Structure of _source:", source_structure)
+        # logging.info(f"Structure of _source: {source_structure}")
+
+        # Extract data using the known fields
+        hotel_name = hit['_source'].get('HotelName', 'N/A')
+        hotel_rating = hit['_source'].get('HotelRating', 'N/A')
+        address = hit['_source'].get('Address', 'N/A')
+        combined_fields = hit['_source'].get('combined_fields', 'N/A')
+
+        context += f"""
+        Hotel Name: {hotel_name}
+        Rating: {hotel_rating}
+        Address: {address}
+        Review Chunk: {combined_fields}
+        """
+
 
     prompt = f"""
   Instructions:
 
-- You are a helpful and knowledgeable assistant designed to assist users in finding and recommending restaurants based on provided reviews. Your primary goal is to provide accurate, personalized, and relevant restaurant recommendations using semantically matching restaurant reviews.
+- You are a helpful and knowledgeable assistant designed to assist users in finding and recommending hotels based on provided reviews. Your primary goal is to provide accurate, personalized, and relevant hotel recommendations using semantically matching hotel reviews.
 
 Guidelines:
 
@@ -95,7 +103,7 @@ When referring to previous messages, ensure that restaurant names, ratings, or s
 Tone and Style:
 
 Maintain a friendly and approachable tone.
-Encourage exploration by being enthusiastic and supportive of all user queries about restaurants.
+Encourage exploration by being enthusiastic and supportive of all user queries about hotels.
 
 - Answer questions truthfully and factually using only the context presented.
 - If you don't know the answer, just say that you don't know, don't make up an answer.
@@ -159,13 +167,13 @@ def build_conversation_history(history, user_message, ai_response):
     else:
         logging.info("History is greater than 4 messages. Summarizing conversation")
         summary_prompt = f"""
-You are a conversation summarizer specializing in restaurant recommendations, reviews, and related topics. Your task is to create a detailed and accurate summary of the conversation history, incorporating the new message provided. This summary will be used as context for future interactions, so ensure it retains all relevant details, especially the specific restaurants discussed, their ratings, and key points mentioned by the user.
+You are a conversation summarizer specializing in restaurant recommendations, reviews, and related topics. Your task is to create a detailed and accurate summary of the conversation history, incorporating the new message provided. This summary will be used as context for future interactions, so ensure it retains all relevant details, especially the specific hotels discussed, their ratings, and key points mentioned by the user.
 
 Rules:
 1. Summarize the entire conversation, including the provided history and the new message.
-2. Prioritize the restaurants mentioned in the latest user queries and assistant responses. Maintain focus on these restaurants in subsequent interactions.
+2. Prioritize the hotels mentioned in the latest user queries and assistant responses. Maintain focus on these hotels in subsequent interactions.
 3. Ensure that restaurant names, ratings, specific food items, and any notable characteristics (e.g., speed of service, atmosphere, cuisine type) are clearly retained and highlighted in the summary.
-4. Avoid introducing irrelevant details or shifting focus to restaurants not part of the immediate conversation.
+4. Avoid introducing irrelevant details or shifting focus to hotels not part of the immediate conversation.
 5. Use a structured format optimized for AI processing, keeping relevant information at the forefront. Length may exceed 150 words if necessary to maintain context.
 6. Highlight any unresolved questions or areas that may require further clarification in future interactions.
 
@@ -179,8 +187,8 @@ New Assistant response:
 {ai_response}
 
 Provide your summary in the following format:
-SUMMARY: [Detailed summary focusing on the specific restaurants discussed, their key characteristics, and any user preferences or questions.]
-KEY RESTAURANTS: [List of restaurant names mentioned in the conversation, along with their ratings and any specific details relevant to the user’s queries.]
+SUMMARY: [Detailed summary focusing on the specific hotels discussed, their key characteristics, and any user preferences or questions.]
+KEY hotels: [List of restaurant names mentioned in the conversation, along with their ratings and any specific details relevant to the user’s queries.]
 RELEVANT DETAILS: [List any specific food items, service attributes, or user preferences mentioned.]
 TOPICS: [List of key topics discussed, such as speed of service, food quality, or atmosphere.]
 UNRESOLVED: [Any open questions or issues that may need further attention.]
