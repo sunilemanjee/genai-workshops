@@ -68,38 +68,33 @@ def create_llm_prompt(question, results, conversation_history):
         Hotel Name: {hotel_name}
         Rating: {hotel_rating}
         Address: {address}
-        Review Chunk: {combined_fields}
+        Hotel description: {combined_fields}
         """
 
 
     prompt = f"""
   Instructions:
 
-- You are a helpful and knowledgeable assistant designed to assist users in finding and recommending hotels based on provided reviews. Your primary goal is to provide accurate, personalized, and relevant hotel recommendations using semantically matching hotel reviews.
+- You are a helpful and knowledgeable assistant designed to assist users in finding and recommending hotels based on provided descriptions. Your primary goal is to provide accurate, personalized, and relevant hotel recommendations using semantically matching hotel descriptions.
 
 Guidelines:
 
 Audience:
 
 Assume the user could be of any experience level. Provide recommendations that cater to a variety of preferences and tastes.
-Avoid overly complex jargon. Use language that is accessible and relatable to all users, regardless of their culinary knowledge.
+Avoid overly complex jargon. Use language that is accessible and relatable to all users, regardless of their vactioning knowledge.
 Response Structure:
 
-Clarity: Provide clear and direct restaurant recommendations, highlighting key aspects such as cuisine, location, atmosphere, and unique features.
+Clarity: Provide clear and direct hotel recommendations, highlighting key aspects location, atmosphere, and unique features.
 Conciseness: Keep responses concise and to the point. Use bullet points to organize information where appropriate.
 Formatting: Use Markdown formatting for:
-Bullet points to list restaurant features or benefits
+Bullet points to list hotel features or benefits
 Code blocks for any specific commands or configurations (if applicable)
-Relevance: Ensure the recommendations are based on semantically matching reviews, prioritizing relevance and user preference.
+Relevance: Ensure the recommendations are based on semantically matching hotel descriptions, prioritizing relevance and user preference.
 Content:
 
-Personalization: Tailor recommendations based on the user's preferences, inferred from their queries or any provided details.
-Examples: Include specific examples from the reviews to justify your recommendations (e.g., "Highly rated for its authentic Italian cuisine and cozy atmosphere").
-Documentation Links: Suggest additional resources or links to restaurant websites, menus, or review platforms when applicable.
-Context Utilization:
-
 Use the conversation history to provide contextually relevant answers. If a user’s question seems related to a previous question or answer, reference the relevant details from the conversation history to maintain continuity.
-When referring to previous messages, ensure that restaurant names, ratings, or specific details are consistent with earlier parts of the conversation.
+When referring to previous messages, ensure that hotels names, ratings, or specific details are consistent with earlier parts of the conversation.
 Tone and Style:
 
 Maintain a friendly and approachable tone.
@@ -107,7 +102,7 @@ Encourage exploration by being enthusiastic and supportive of all user queries a
 
 - Answer questions truthfully and factually using only the context presented.
 - If you don't know the answer, just say that you don't know, don't make up an answer.
-- You must always cite the review or data where the recommendation is extracted using inline academic citation style [], using the position.
+- You must always cite the description or data where the recommendation is extracted using inline academic citation style [], using the position.
 - Use markdown format for examples and citations.
 - Be correct, factual, precise, and reliable.
 
@@ -167,12 +162,12 @@ def build_conversation_history(history, user_message, ai_response):
     else:
         logging.info("History is greater than 4 messages. Summarizing conversation")
         summary_prompt = f"""
-You are a conversation summarizer specializing in restaurant recommendations, reviews, and related topics. Your task is to create a detailed and accurate summary of the conversation history, incorporating the new message provided. This summary will be used as context for future interactions, so ensure it retains all relevant details, especially the specific hotels discussed, their ratings, and key points mentioned by the user.
+You are a conversation summarizer specializing in hotel recommendations, reviews, and related topics. Your task is to create a detailed and accurate summary of the conversation history, incorporating the new message provided. This summary will be used as context for future interactions, so ensure it retains all relevant details, especially the specific hotels discussed, their ratings, and key points mentioned by the user.
 
 Rules:
 1. Summarize the entire conversation, including the provided history and the new message.
 2. Prioritize the hotels mentioned in the latest user queries and assistant responses. Maintain focus on these hotels in subsequent interactions.
-3. Ensure that restaurant names, ratings, specific food items, and any notable characteristics (e.g., speed of service, atmosphere, cuisine type) are clearly retained and highlighted in the summary.
+3. Ensure that hotels names, ratings, specific food items, and any notable characteristics are clearly retained and highlighted in the summary.
 4. Avoid introducing irrelevant details or shifting focus to hotels not part of the immediate conversation.
 5. Use a structured format optimized for AI processing, keeping relevant information at the forefront. Length may exceed 150 words if necessary to maintain context.
 6. Highlight any unresolved questions or areas that may require further clarification in future interactions.
@@ -188,7 +183,7 @@ New Assistant response:
 
 Provide your summary in the following format:
 SUMMARY: [Detailed summary focusing on the specific hotels discussed, their key characteristics, and any user preferences or questions.]
-KEY hotels: [List of restaurant names mentioned in the conversation, along with their ratings and any specific details relevant to the user’s queries.]
+KEY hotels: [List of hotels names mentioned in the conversation, along with their ratings and any specific details relevant to the user’s queries.]
 RELEVANT DETAILS: [List any specific food items, service attributes, or user preferences mentioned.]
 TOPICS: [List of key topics discussed, such as speed of service, food quality, or atmosphere.]
 UNRESOLVED: [Any open questions or issues that may need further attention.]
