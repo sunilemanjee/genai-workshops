@@ -1,0 +1,23 @@
+POST hotels/_search
+{
+  "size": 5,
+  "retriever": {
+    "text_similarity_reranker": {
+      "retriever": {
+        "standard": {
+          "query": {
+            "semantic": {
+              "field": "semantic_description_elser",
+              "query": "{query}"
+            }
+          }
+        }
+      },
+      "field": "description",
+      "inference_id": "elastic-reranker",
+      "inference_text": "{query}",
+      "rank_window_size": 10,
+      "min_score": 0.5
+    }
+  }
+}
